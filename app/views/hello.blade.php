@@ -18,6 +18,6 @@
 
 @section('buttons')
 	<p>
-		<a class="pure-button pure-button-primary" href="#">Get Started</a>
+		<a class="pure-button pure-button-primary" href="{{ url('step1') }}">Get Started</a>
 	</p>
 @endsection
