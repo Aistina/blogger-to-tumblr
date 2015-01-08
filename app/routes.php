@@ -14,3 +14,4 @@
 Route::get('/', 'HomeController@showWelcome');
 Route::get('/step1', 'MigrationController@showStep1');
 Route::get('/step2', 'MigrationController@showStep2');
+Route::get('/step3', 'MigrationController@showStep3');
