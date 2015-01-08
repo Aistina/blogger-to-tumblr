@@ -1,0 +1,52 @@
+/**
+ * 6-color matching palette:
+ *
+ * #1F5A66
+ * #369EB3
+ * #66421F
+ * #B35F36
+ * #999999
+ * #666666
+ */
+
+body {
+    background-color: #1F4166;
+    color: #FFF;
+}
+
+.btb-menu {
+    background-color: #3672B3;
+}
+
+.btb-menu .pure-menu-heading {
+    color: #FFF;
+    font-weight: 400;
+    font-size: 120%;
+}
+
+.content, .buttons {
+    width: 720px;
+    margin: auto;
+    line-height: 1em;
+}
+
+.content {
+    margin-top: 100px;
+    font-size: 20px;
+    font-weight: bold;
+    /*color: white;*/
+    border: 3px solid #3672B3;
+    font-weight: 100;
+    border-radius: 5px;
+    padding: 1em 1.6em;
+    box-sizing: border-box;
+}
+
+.buttons {
+    text-align: right;
+}
+
+.pure-button {
+    background-color: #B38B36 !important;
+    color: #FFF !important;
+}
