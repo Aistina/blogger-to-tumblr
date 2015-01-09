@@ -47,6 +47,9 @@ class MigrationController extends BaseController
             return $response;
         }
 
+        $blogger = $this->getBloggerService();
+
+        $this->layout->content = View::make('steps.step3')->with('blogs', $blogger->blogs->listByUser('self'));
     }
 
     /**
@@ -91,6 +94,7 @@ class MigrationController extends BaseController
             $requestHandler = $tumblr->getRequestHandler();
             $response = $requestHandler->request('POST', 'oauth/access_token', array('oauth_verifier' => $code));
 
+            // Extract the OAuth token & secret.
             $out = $result = $response->body;
             $data = array();
             parse_str($out, $data);
@@ -108,7 +112,7 @@ class MigrationController extends BaseController
             return Redirect::to(URL::current());
         }
 
-        if ($tumblr->getAccessToken() === null) {
+        if (!Session::has('tumblr.oauthtoken') || !Session::has('tumblr.oauthtokensecret')) {
             // Back to step 2.
             return Redirect::to(URL::to('step2'));
         }
@@ -129,9 +133,13 @@ class MigrationController extends BaseController
     {
         // Set up the client.
         $client = new Google_Client;
+        $client->setAccessType('online');
+        $client->setApplicationName('Blogger To Tumblr');
         $client->setClientId(Config::get('google.clientid'));
         $client->setClientSecret(Config::get('google.clientsecret'));
         $client->setRedirectUri(URL::to('step2'));
+
+        $service = $this->getBloggerService($client);
 
         // Add the required scopes.
         $client->addScope(Google_Service_Blogger::BLOGGER_READONLY);
@@ -142,6 +150,16 @@ class MigrationController extends BaseController
         }
 
         return $client;
+    }
+
+    /**
+     * Get an instance of the Google Blogger service.
+     *
+     * @return Google_Service_Blogger
+     */
+    protected function getBloggerService($client = null)
+    {
+        return new Google_Service_Blogger($client ?: $this->getGoogleClient());
     }
 
     /**
@@ -187,7 +205,7 @@ class MigrationController extends BaseController
         // Request a token.
         $response = $requestHandler->request('POST', 'oauth/request_token', array());
 
-        // Extract the oauth_token.
+        // Extract the OAuth token & secret.
         $out = $result = $response->body;
         $data = array();
         parse_str($out, $data);
