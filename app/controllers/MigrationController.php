@@ -84,8 +84,8 @@ class MigrationController extends BaseController
     {
         $tumblr = $this->getTumblrClient();
 
-        if (Input::has('oauth_token')) {
-            $code = Input::get('oauth_token');
+        if (Input::has('oauth_verifier')) {
+            $code = Input::get('oauth_verifier');
 
             // Verify the token we got.
             $requestHandler = $tumblr->getRequestHandler();
@@ -99,8 +99,10 @@ class MigrationController extends BaseController
             if ($response->status != 200) {
                 throw new RuntimeException($this->formatTumblrError($data));
             }
-            dd($resp, $data);
-            Session::put('tumblr.token', $google->getAccessToken());
+
+            // Excellent, save the token & secret.
+            Session::put('tumblr.oauthtoken', $data['oauth_token']);
+            Session::put('tumblr.oauthtokensecret', $data['oauth_token_secret']);
 
             // Strip off GET params
             return Redirect::to(URL::current());
@@ -162,7 +164,7 @@ class MigrationController extends BaseController
         $requestHandler->setBaseUrl(static::TUMBLR_BASE);
 
         // If we already have a token & token secret, set it.
-        if ($token = Session::get('tumblr.oauthtoken') && $secret = Session::get('tumblr.oauthtokensecret')) {
+        if (($token = Session::get('tumblr.oauthtoken')) && ($secret = Session::get('tumblr.oauthtokensecret'))) {
             $client->setToken($token, $secret);
         }
 
